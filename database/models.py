@@ -16,13 +16,6 @@ def setup_db(app):
     db.init_app(app)
 
 
-'''
-db_drop_and_create_all()
-    drops the database tables and starts fresh
-    can be used to initialize a clean database
-'''
-
-
 #----------------------------------------------------------------------------#
 # Movie Models.
 #----------------------------------------------------------------------------#
