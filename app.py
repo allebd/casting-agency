@@ -28,10 +28,13 @@ def create_app(test_config=None):
         )
         return response
 
-
     @app.route('/')
     def retrieve_home():
         return 'Welcome to Alleb Casting Agency!'
+
+    #----------------------------------------------------------------------------#
+    # Movie Endpoints.
+    #----------------------------------------------------------------------------#
 
     # Get all available movies.
     @app.route('/movies', methods=['GET'])
@@ -50,7 +53,7 @@ def create_app(test_config=None):
     # Get a movie by movie id.
     @app.route('/movies/<int:movie_id>', methods=['GET'])
     def retrieve_movie_by_id(movie_id):
-        
+
         movie = Movie.query.get(movie_id)
 
         if movie is None:
@@ -87,8 +90,7 @@ def create_app(test_config=None):
                 'message': 'movie successfully added',
                 'movies': [movie.format() for movie in movies]
             })
-        except BaseException as err:
-            print(err)
+        except BaseException:
             abort(422)
 
     # Update a movie
@@ -122,7 +124,7 @@ def create_app(test_config=None):
 
     # Delete a movie
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
-    def delete_question(movie_id):
+    def delete_movie(movie_id):
         try:
             movie = Movie.query.filter(
                 Movie.id == movie_id).one_or_none()
@@ -139,6 +141,123 @@ def create_app(test_config=None):
                 'deleted': movie_id,
                 'movies': [movie.format() for movie in movies],
                 'total_movies': len(movies)
+            }), 200
+        except BaseException:
+            abort(422)
+
+    #----------------------------------------------------------------------------#
+    # Actor Endpoints
+    #----------------------------------------------------------------------------#
+
+    # Get all available actors.
+    @app.route('/actors', methods=['GET'])
+    def retrieve_actors():
+        try:
+            actors = Actor.query.order_by(Actor.name).all()
+
+            return jsonify({
+                'success': True,
+                'actors': [actor.format() for actor in actors],
+                'total_actors': len(actors)
+            }), 200
+        except BaseException:
+            abort(500)
+
+    # Get a actor by actor id.
+    @app.route('/actors/<int:actor_id>', methods=['GET'])
+    def retrieve_actor_by_id(actor_id):
+
+        actor = Actor.query.get(actor_id)
+        print(actor)
+        if actor is None:
+            abort(404)
+        else:
+            return jsonify({
+                'success': True,
+                'actor': actor.format()
+            }), 200
+
+    # Add a new actor
+    @app.route('/actors', methods=['POST'])
+    def create_actors():
+        body = request.get_json()
+
+        new_name = body.get('name', None)
+        new_age = body.get('age', None)
+        new_gender = body.get('gender', None)
+
+        if validate_actor(new_name, new_age, new_gender) is False:
+            abort(400)
+
+        try:
+            actor = Actor(
+                name=new_name,
+                age=new_age,
+                gender=new_gender
+            )
+
+            actor.insert()
+
+            actors = Actor.query.order_by(Actor.name).all()
+
+            return jsonify({
+                'success': True,
+                'message': 'actor successfully added',
+                'actors': [actor.format() for actor in actors]
+            })
+        except BaseException:
+            abort(422)
+
+    # Update a actor
+    @app.route('/actors/<int:actor_id>', methods=['PATCH'])
+    def edit_actor(actor_id):
+        body = request.get_json()
+
+        edited_name = body.get('name', None)
+        edited_age = body.get('age', None)
+        edited_gender = body.get('gender', None)
+
+        if validate_actor(edited_name, edited_age, edited_gender) is False:
+            abort(400)
+
+        actor = Actor.query.filter(Actor.id == actor_id).one_or_none()
+
+        if actor is None:
+            abort(404)
+
+        try:
+            actor.name = edited_name
+            actor.age = edited_age
+            actor.gender = edited_gender
+            actor.update()
+
+            return jsonify({
+                'success': True,
+                'message': 'actor successfully updated',
+                'actor': actor.format()
+            })
+        except BaseException:
+            abort(422)
+
+    # Delete an actor
+    @app.route('/actors/<int:actor_id>', methods=['DELETE'])
+    def delete_actor(actor_id):
+        try:
+            actor = Actor.query.filter(
+                Actor.id == actor_id).one_or_none()
+
+            if actor is None:
+                abort(404)
+
+            actor.delete()
+
+            actors = Actor.query.order_by(Actor.id).all()
+
+            return jsonify({
+                'success': True,
+                'deleted': actor_id,
+                'actors': [actor.format() for actor in actors],
+                'total_actors': len(actors)
             }), 200
         except BaseException:
             abort(422)
