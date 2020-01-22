@@ -23,5 +23,6 @@ def seed():
     Actor(name='Adria Arjona', age=27, gender='female').insert()
     Actor(name='Dave Franco', age=34, gender='male').insert()
 
+
 if __name__ == '__main__':
     manager.run()
