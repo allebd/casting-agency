@@ -9,7 +9,6 @@ def validate_movie(title, release_date):
 
 def validate_actor(name, age, gender):
     name = name.strip()
-    age = age.strip()
     gender = gender.strip()
     if (name == '' or age == '' or gender == ''):
         return False
