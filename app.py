@@ -33,9 +33,7 @@ def create_app(test_config=None):
     def retrieve_home():
         return 'Welcome to Alleb Casting Agency!'
 
-    #----------------------------------------------------------------------------#
     # Movie Endpoints.
-    #----------------------------------------------------------------------------#
 
     # Get all available movies.
     @app.route('/movies', methods=['GET'])
@@ -73,8 +71,8 @@ def create_app(test_config=None):
     def create_movies(jwt):
         body = request.get_json()
 
-        new_title = body.get('title', None)
-        new_release_date = body.get('release_date', None)
+        new_title = body.get('title')
+        new_release_date = body.get('release_date')
 
         if validate_movie(new_title, new_release_date) is False:
             abort(400)
@@ -103,8 +101,8 @@ def create_app(test_config=None):
     def edit_movie(jwt, movie_id):
         body = request.get_json()
 
-        edited_title = body.get('title', None)
-        edited_release_date = body.get('release_date', None)
+        edited_title = body.get('title')
+        edited_release_date = body.get('release_date')
 
         if validate_movie(edited_title, edited_release_date) is False:
             abort(400)
@@ -151,9 +149,7 @@ def create_app(test_config=None):
         except BaseException:
             abort(422)
 
-    #----------------------------------------------------------------------------#
     # Actor Endpoints
-    #----------------------------------------------------------------------------#
 
     # Get all available actors.
     @app.route('/actors', methods=['GET'])
@@ -191,9 +187,9 @@ def create_app(test_config=None):
     def create_actors(jwt):
         body = request.get_json()
 
-        new_name = body.get('name', None)
-        new_age = body.get('age', None)
-        new_gender = body.get('gender', None)
+        new_name = body.get('name')
+        new_age = body.get('age')
+        new_gender = body.get('gender')
 
         if validate_actor(new_name, new_age, new_gender) is False:
             abort(400)
@@ -223,9 +219,9 @@ def create_app(test_config=None):
     def edit_actor(jwt, actor_id):
         body = request.get_json()
 
-        edited_name = body.get('name', None)
-        edited_age = body.get('age', None)
-        edited_gender = body.get('gender', None)
+        edited_name = body.get('name')
+        edited_age = body.get('age')
+        edited_gender = body.get('gender')
 
         if validate_actor(edited_name, edited_age, edited_gender) is False:
             abort(400)
@@ -313,6 +309,12 @@ def create_app(test_config=None):
             "error": 500,
             "message": "Internal Server Error"
         }), 500
+
+    @app.errorhandler(AuthError)
+    def handle_auth_error(err):
+        return jsonify(
+            err.error
+        ), err.status_code
 
     return app
 
