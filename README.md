@@ -74,7 +74,7 @@ To run the server, execute:
 flask run
 ```
 
-#### Authorization keys
+#### Access Tokens
 
 ```bash
 EXECUTIVE_PRODUCER = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik9EVTNNRVkxTlRnME1rWTFPRE00TlVORU9EbEJRakUwTVRoRk1qZzBOa1ZGUkRrelJFVXdRZyJ9.eyJpc3MiOiJodHRwczovL2Nhc3RpbmctYWxsZWJkLmF1dGgwLmNvbS8iLCJzdWIiOiJnb29nbGUtb2F1dGgyfDEwNzE1ODkwOTY3NDQzMDQwMjE2MyIsImF1ZCI6WyJjYXN0aW5nIiwiaHR0cHM6Ly9jYXN0aW5nLWFsbGViZC5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNTc5Nzc5NjMwLCJleHAiOjE1Nzk4NTE2MzAsImF6cCI6InZlbFB3c2RDdWhZbzRrNjdFT003cnBCWUNwY3I1SWpCIiwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInBlcm1pc3Npb25zIjpbImRlbGV0ZTphY3RvcnMiLCJkZWxldGU6bW92aWVzIiwiZ2V0OmFjdG9ycyIsImdldDptb3ZpZXMiLCJwYXRjaDphY3RvcnMiLCJwYXRjaDptb3ZpZXMiLCJwb3N0OmFjdG9ycyIsInBvc3Q6bW92aWVzIl19.eYVQHB6CY5GpU1OkzXngBZqNGyccc0bGLofCjXraI_3aDAZ9a51c6JA4y6F-DE8BtVfGtbfFpJLOk-kKb7MUM8niRO8xx8QQd03VVeSbpEHfyVCx0VPs2o5Ni5jKu9UTpSqQqylJqMoFv2226nscFOGgW-257EClxMqyeS4SA1aIxc7k5AJ5isWEsyY0PtozapWfAQ-xhaAjqXX1KlMb9jknjFxon-H-9a5cLqcqVbN2yK4xZUXvBpeFW0DKfSwuny6w3fmW7EZtk3riNluC3iQmdLxuQgjj-UTeko-8w8EjLCz_mGQj5HBPrvreSmUjw8ZmKZUIsl1DCWUEJFPsOQ'
@@ -84,18 +84,24 @@ CASTING_ASSISTANT = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik9EVTNNRVkxTlR
 
 ### Endpoints
 
-| METHOD | DESCRIPTION            | ENDPOINTS
-| ------ | ---------------------- | ---------------------
-| GET    | Get all movies         | `/movies`
-| GET    | Get a movie by id      | `/movies/:movie_id`
-| POST   | Create a movie         | `/movies`
-| PATCH  | Update a movie         | `/movies/:movie_id`
-| DELETE | Delete a movie         | `/movies/:movie_id`
-| GET    | Get all actors         | `/actors`
-| GET    | Get an actor by id     | `/actors/:actor_id`
-| POST   | Create an actor        | `/actors`
-| PATCH  | Update an actor        | `/actors/:actor_id`
-| DELETE | Delete an actor        | `/actors/:actor_id`
+NOTE:
+
+* Users should be logged in and must have the required permission to access endpoints
+* User permission include EXECUTIVE PRODUCER, CASTING DIRECTOR and CASTING ASSISTANT
+* The access tokens above can be used for the respective permitted endpoint
+
+| METHOD | DESCRIPTION            | ENDPOINTS            | ACCESS PERMISSION  | PERMITTED USER
+| ------ | ---------------------- | -------------------- | ------------------ | ---------------------------------
+| GET    | Get all movies         | `/movies`            | get:movies         | ALL USERS
+| GET    | Get a movie by id      | `/movies/:movie_id`  | get:movies         | ALL USERS
+| POST   | Create a movie         | `/movies`            | post:movies        | PRODUCER ONLY
+| PATCH  | Update a movie         | `/movies/:movie_id`  | patch:movies       | PRODUCER & DIRECTOR ONLY
+| DELETE | Delete a movie         | `/movies/:movie_id`  | delete:movies      | PRODUCER ONLY
+| GET    | Get all actors         | `/actors`            | get:actors         | ALL USERS
+| GET    | Get an actor by id     | `/actors/:actor_id`  | get:actors         | ALL USERS
+| POST   | Create an actor        | `/actors`            | post:actors        | PRODUCER & DIRECTOR ONLY
+| PATCH  | Update an actor        | `/actors/:actor_id`  | patch:actors       | PRODUCER & DIRECTOR ONLY
+| DELETE | Delete an actor        | `/actors/:actor_id`  | delete:actors      | PRODUCER & DIRECTOR ONLY
 
 ```bash
 GET '/movies'
@@ -119,7 +125,7 @@ GET '/movies'
   "total_movies": 2
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 GET '/movies/{movie_id}'
 - Fetches a movie the database
@@ -136,7 +142,7 @@ GET '/movies/{movie_id}'
   "success": true
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 POST '/movies'
 - Creates a movie in the database
@@ -163,7 +169,7 @@ POST '/movies'
   ]
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 PATCH '/movies/{movie_id}'
 - Edits a movie from the database
@@ -182,7 +188,7 @@ PATCH '/movies/{movie_id}'
   "message": 'movie successfully updated'
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 DELETE '/movies/{movie_id}'
 - Deletes a movie from the database
@@ -207,7 +213,7 @@ DELETE '/movies/{movie_id}'
   "total_movies": 2
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 GET '/actors'
 - Fetches a dictionary of actors in which the keys are the ids and the value is the corresponding string of the actor
@@ -232,7 +238,7 @@ GET '/actors'
   "total_actors": 2
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 GET '/actors/{actor_id}'
 - Fetches a dictionary of actors in which the keys are the ids and the value is the corresponding string of the actor
@@ -250,7 +256,7 @@ GET '/actors/{actor_id}'
   "success": true
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 POST '/actors'
 - Creates a new actor in the database
@@ -280,7 +286,7 @@ POST '/actors'
   ]
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 PATCH '/actors/{actor_id}'
 - Edits an actor  from the database
@@ -300,7 +306,7 @@ PATCH '/actors/{actor_id}'
   "message": 'actor successfully updated'
 }
 
-***********************************************************************************************************************************
+***********************************************************************************************************************
 
 DELETE '/actors/{actor_id}'
 - Deletes an actor from the database
