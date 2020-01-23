@@ -32,7 +32,6 @@ Below are the key dependencies
 ### Clone
 
 * Clone this project to your local machine `https://github.com/allebd/casting-agency.git`
-  > Run the command below
 
 ```bash
    git clone https://github.com/allebd/casting-agency.git
